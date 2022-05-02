@@ -23,6 +23,7 @@
 #include <ktxreader/Ktx1Reader.h>
 #include <gltfio/AssetLoader.h>
 #include <gltfio/ResourceLoader.h>
+#include <gltfio/TextureProvider.h>
 
 #include <fstream>
 #include <iostream>
@@ -31,6 +32,10 @@
 // This file is generated via the "Run Script" build phase and contains the IBL and skybox
 // textures this app uses.
 #include "resources.h"
+
+#include <chrono>
+#include <ctime>
+#include <sys/time.h>
 
 using namespace ktxreader;
 
@@ -43,6 +48,7 @@ App::App(void* nativeLayer, uint32_t width, uint32_t height, const utils::Path& 
 }
 
 void App::render() {
+    app.resourceLoader->asyncUpdateLoad();
     if (renderer->beginFrame(swapChain)) {
         renderer->render(view);
         renderer->endFrame();
@@ -62,7 +68,9 @@ App::~App() {
     app.materialProvider->destroyMaterials();
     delete app.materialProvider;
     gltfio::AssetLoader::destroy(&app.assetLoader);
-
+    if (app.resourceLoader) {
+        delete app.resourceLoader;
+    }
     engine->destroy(renderer);
     engine->destroy(scene);
     engine->destroy(view);
@@ -137,11 +145,17 @@ void App::setupMesh() {
     }
     app.asset = app.assetLoader->createAssetFromBinary(buffer.data(), static_cast<uint32_t>(size));
 
-    gltfio::ResourceLoader({
+    app.resourceLoader = new gltfio::ResourceLoader({
         .engine = engine,
         .normalizeSkinningWeights = true,
         .recomputeBoundingBoxes = false
-    }).loadResources(app.asset);
+    });
+    auto decoder = gltfio::createStbProvider(engine);
+    app.resourceLoader->addTextureProvider("image/png", decoder);
+    app.resourceLoader->addTextureProvider("image/jpeg", decoder);
+    app.resourceLoader->asyncBeginLoad(app.asset);
+    
+    
 
     scene->addEntities(app.asset->getEntities(), app.asset->getEntityCount());
 }

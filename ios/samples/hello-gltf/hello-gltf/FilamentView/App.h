@@ -31,6 +31,9 @@
 #include <utils/EntityManager.h>
 #include <utils/Path.h>
 
+#include <gltfio/Animator.h>
+#include <gltfio/FilamentAsset.h>
+
 using namespace filament;
 using namespace filament::math;
 using utils::Entity;
@@ -40,6 +43,7 @@ namespace gltfio {
     class AssetLoader;
     class MaterialProvider;
     class FilamentAsset;
+    class ResourceLoader;
 }
 
 class App {
@@ -83,6 +87,7 @@ private:
         gltfio::AssetLoader* assetLoader;
         gltfio::MaterialProvider* materialProvider;
         gltfio::FilamentAsset* asset;
+        gltfio::ResourceLoader* resourceLoader;
     } app;
 
     CameraManipulator cameraManipulator;
