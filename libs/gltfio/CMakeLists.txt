@@ -122,8 +122,8 @@ build_ubershader(volume                    volume          _ _)
 build_ubershader(transmission              transmission    _ _)
 build_ubershader(sheen                     sheen           _ _)
 
-add_custom_target(uberz_file DEPENDS ${UBERZ_OUTPUT_PATH})
-set_target_properties(uberz_file PROPERTIES FOLDER Libs)
+# add_custom_target(uberz_file DEPENDS ${UBERZ_OUTPUT_PATH})
+# set_target_properties(uberz_file PROPERTIES FOLDER Libs)
 
 # ==================================================================================================
 # Build a resgen library for the ubershader archive.
